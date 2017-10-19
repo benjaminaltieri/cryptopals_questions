@@ -1,0 +1,2 @@
+add_gmock_test(ExampleQuestionTest ExampleQuestionTest.cpp)
+target_link_libraries(ExampleQuestionTest ExampleQuestion)
