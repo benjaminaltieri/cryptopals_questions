@@ -40,6 +40,8 @@ static long int make_change(int amount, std::vector<int> coins, map<string, long
             ways += ::make_change(amount - coins[0], coins, memo);
             coins.erase(coins.begin());
             ways += ::make_change(amount, coins, memo);
+            memo.insert(make_pair(key, ways));
+            cout << "Memo'd " << key << " = " << ways << endl;
         }
         return ways;
     }
