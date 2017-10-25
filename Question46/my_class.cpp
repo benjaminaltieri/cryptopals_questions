@@ -20,30 +20,32 @@ string MyClass::str_repr() const
 
 vector<string> MyClass::mesh_path(unordered_map<string, vector<string> >& mesh, pair<string, string> connection)
 {
+    if(!mesh.count(connection.first) || !mesh.count(connection.second)) return {};
     // corner case of loopback
-    if (connection.first == connection.second) return {};
+    if (connection.first == connection.second) return {connection.first};
     unordered_set<string> visited;
     deque<deque<string> > next;
 
     deque<string> start, valid_path;
-    start.push_front(connection.first);
+    start.push_back(connection.first);
     next.push_back(start);
     while (valid_path.empty() && !next.empty())
     {
         deque<string> path = next.front();
         next.pop_front();
-        visited.insert(path.front());
-        auto it = mesh.find(path.front());
+        string current = path.back();
+        visited.insert(current);
+        auto it = mesh.find(current);
         if (it != mesh.end()) {
-            for(const string& name : it->second)
+            for(const string& child : it->second)
             {
-                if (name == connection.second) { // found it!
+                if (child == connection.second) { // found it!
                     valid_path = path;
-                    valid_path.push_front(name);
+                    valid_path.push_back(child);
                     break;
-                } else if (visited.find(name) == visited.end()) {
+                } else if (visited.find(child) == visited.end()) {
                     deque<string> new_path = path;
-                    new_path.push_front(name);
+                    new_path.push_back(child);
                     next.push_back(new_path);
                 }
             }
@@ -51,12 +53,5 @@ vector<string> MyClass::mesh_path(unordered_map<string, vector<string> >& mesh, 
 
     }
 
-    // undeque path if it was populated
-    vector<string> result;
-    while (!valid_path.empty()) {
-        result.push_back(valid_path.back());
-        valid_path.pop_back();
-    }
-
-    return result;
+    return {valid_path.begin(), valid_path.end()};
 }

@@ -79,6 +79,21 @@ namespace testing {
         EXPECT_THAT(MyClass::mesh_path(input, pair<string, string>("Jayden", "Maurice")), ContainerEq(output));
     }
 
+    TEST_F(Question46Test, mesh_FindLoopback)
+    {
+        unordered_map<string, vector<string> > input = {
+            { "Min",     { "William", "Jayden", "Omar" } },
+            { "William", { "Min", "Noam" } },
+            { "Jayden",  { "Min", "Amelia", "Ren", "Noam" } },
+            { "Ren",     { "Jayden", "Omar" } },
+            { "Amelia",  { "Jayden", "Adam", "Miguel" } },
+            { "Adam",    { "Amelia", "Miguel", "Sofia", "Lucas" } },
+            { "Miguel",  { "Amelia", "Adam", "Liam", "Nathan" } },
+        };
+        vector<string> output = {"Adam"};
+        EXPECT_THAT(MyClass::mesh_path(input, pair<string, string>("Adam", "Adam")), ContainerEq(output));
+    }
+
 } // namespace testing
 
 } // namespace Question46
