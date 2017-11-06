@@ -1,13 +1,25 @@
-#include "my_class.h"
+#include "example_class.h"
 
 #include <string>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-using std::string;
 using ::testing::Eq;
+using ::testing::ContainerEq;
 using ::testing::Test;
+
+using namespace std;
+
+#ifdef GTEST_CUSTOM_TYPE_PRINTING
+::std::ostream& operator<<(::std::ostream& os, const CustomType& custom_type) {
+    return os << "CustomType(value: " << custom_type.value() << ")";
+}
+
+void PrintTo(const CustomType& custom_type, ::std::ostream* os) {
+  *os << custom_type;
+}
+#endif
 
 namespace ExampleQuestion {
 
@@ -22,7 +34,7 @@ namespace testing {
         virtual void SetUp(){}
         virtual void TearDown(){}
 
-        MyClass my_class;
+        ExampleClass example_class;
 
         static const size_t taskCount = 3;
         static const string default_str_repr;
@@ -32,7 +44,7 @@ namespace testing {
 
     TEST_F(ExampleQuestionTest, constructor_hasDefaultStrRepr)
     {
-        EXPECT_THAT(my_class.str_repr(), Eq(ExampleQuestionTest::default_str_repr));
+        EXPECT_THAT(example_class.str_repr(), Eq(ExampleQuestionTest::default_str_repr));
     }
 
 } // namespace testing

@@ -1,16 +1,19 @@
 #include <iostream>
+
+#include "example_class.h"
+
 using namespace std;
 
-string myFunction (const string& arg)
+string ExampleFunction(const string& arg)
 {
-    // write the body of your function here
+    // for when a single function will do (no class/lib needed)
     return "running with " + arg;
 }
 
 int main ()
 {
-    // run your function through some test cases here
-    // remember: debugging is half the battle!
-    cout << myFunction ("test input");
+    // old school test cases and console output here
+    cout << ExampleFunction("test input") << endl;
+
     return 0;
 }
