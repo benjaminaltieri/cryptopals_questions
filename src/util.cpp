@@ -1,3 +1,5 @@
+#include <assert.h>
+
 #include "util.h"
 
 using namespace std;
@@ -78,6 +80,59 @@ namespace { // module private helpers
         return encoded_chars;
     }
 
+    int32_t get_etaoin_shrdlu_score(uint8_t value)
+    {
+        static bool built_yet = false;
+        static vector<int32_t> etaoin_shrdlu_score_book;
+        if (!built_yet) {
+            // Build scorebook
+            vector<int32_t> below_bounds_indices(0x20, -10);
+            vector<int32_t> lettered_indices(0x60, 0);
+            vector<int32_t> above_bounds_indices(0x80, -10);
+            etaoin_shrdlu_score_book.reserve(below_bounds_indices.size()
+                                             + lettered_indices.size()
+                                             + above_bounds_indices.size());
+            etaoin_shrdlu_score_book.insert(etaoin_shrdlu_score_book.end(),
+                                            below_bounds_indices.begin(),
+                                            below_bounds_indices.end());
+            etaoin_shrdlu_score_book.insert(etaoin_shrdlu_score_book.end(),
+                                            lettered_indices.begin(),
+                                            lettered_indices.end());
+            etaoin_shrdlu_score_book.insert(etaoin_shrdlu_score_book.end(),
+                                            above_bounds_indices.begin(),
+                                            above_bounds_indices.end());
+            assert(etaoin_shrdlu_score_book.size() == 0x100);
+            etaoin_shrdlu_score_book[0x7F] = -10;
+            etaoin_shrdlu_score_book['e'] = 10;
+            etaoin_shrdlu_score_book['t'] = 10;
+            etaoin_shrdlu_score_book['a'] = 10;
+            etaoin_shrdlu_score_book['o'] = 10;
+            etaoin_shrdlu_score_book['i'] = 10;
+            etaoin_shrdlu_score_book['n'] = 10;
+            etaoin_shrdlu_score_book[' '] = 10;
+            etaoin_shrdlu_score_book['s'] = 10;
+            etaoin_shrdlu_score_book['h'] = 10;
+            etaoin_shrdlu_score_book['r'] = 10;
+            etaoin_shrdlu_score_book['d'] = 10;
+            etaoin_shrdlu_score_book['l'] = 10;
+            etaoin_shrdlu_score_book['u'] = 10;
+            etaoin_shrdlu_score_book['E'] = 10;
+            etaoin_shrdlu_score_book['T'] = 10;
+            etaoin_shrdlu_score_book['A'] = 10;
+            etaoin_shrdlu_score_book['O'] = 10;
+            etaoin_shrdlu_score_book['I'] = 10;
+            etaoin_shrdlu_score_book['N'] = 10;
+            etaoin_shrdlu_score_book['S'] = 10;
+            etaoin_shrdlu_score_book['H'] = 10;
+            etaoin_shrdlu_score_book['R'] = 10;
+            etaoin_shrdlu_score_book['D'] = 10;
+            etaoin_shrdlu_score_book['L'] = 10;
+            etaoin_shrdlu_score_book['U'] = 10;
+            built_yet = true;
+        }
+        return etaoin_shrdlu_score_book[value];
+    }
+
 }
 
 namespace cryptopals {
@@ -147,6 +202,16 @@ namespace util {
             xored.push_back(data_a[i] ^ data_b[i]);
         }
         return xored;
+    }
+
+    int64_t score_etaoin_shrdlu(vector<uint8_t> data)
+    {
+        int64_t score = 0;
+        for (const uint8_t& datum : data)
+        {
+            score += get_etaoin_shrdlu_score(datum);
+        }
+        return score;
     }
 
 } /* util */

@@ -15,6 +15,7 @@ namespace util {
     std::string base16_to_base64(std::string base16);
     std::string base64_to_base16(std::string base64);
     std::vector<uint8_t> fixed_xor(std::vector<uint8_t> data_a, std::vector<uint8_t> data_b);
+    int64_t score_etaoin_shrdlu(std::vector<uint8_t> data);
 
 } /* util */
 
