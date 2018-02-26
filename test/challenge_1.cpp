@@ -65,7 +65,7 @@ namespace test {
 
     TEST_F(Challenge1, base16_to_base64)
     {
-        EXPECT_THAT(util::base16_to_base64(test_input_string), Eq(test_output_string));
+        EXPECT_THAT(util::base16_to_base64(Challenge1::test_input_string), Eq(Challenge1::test_output_string));
     }
 
 } // namespace test

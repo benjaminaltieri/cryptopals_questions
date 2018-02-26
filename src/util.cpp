@@ -119,11 +119,12 @@ namespace util {
     string encode_base16(vector<uint8_t> data)
     {
         string base16;
-        for (const uint8_t& byte : data)
+        for (uint8_t byte : data)
         {
             char lower_nibble = nibble_to_char(byte & 0x0F);
             char upper_nibble = nibble_to_char((byte & 0xF0) >> 4);
-            base16 += string(upper_nibble, lower_nibble);
+            base16 += upper_nibble;
+            base16 += lower_nibble;
         }
         return base16;
     }
@@ -134,6 +135,18 @@ namespace util {
 
     string base64_to_base16(string base64) {
         return encode_base16(decode_base64(base64));
+    }
+
+    vector<uint8_t> fixed_xor(vector<uint8_t> data_a, vector<uint8_t> data_b)
+    {
+        if (data_a.size() != data_b.size()) {
+            throw std::invalid_argument("Mismatched vector length inputs");
+        }
+        vector<uint8_t> xored;
+        for (size_t i = 0; i < data_a.size(); i++) {
+            xored.push_back(data_a[i] ^ data_b[i]);
+        }
+        return xored;
     }
 
 } /* util */

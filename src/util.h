@@ -14,6 +14,7 @@ namespace util {
     std::string encode_base16(std::vector<uint8_t> data);
     std::string base16_to_base64(std::string base16);
     std::string base64_to_base16(std::string base64);
+    std::vector<uint8_t> fixed_xor(std::vector<uint8_t> data_a, std::vector<uint8_t> data_b);
 
 } /* util */
 
