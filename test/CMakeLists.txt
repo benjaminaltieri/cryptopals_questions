@@ -1,0 +1,7 @@
+file(GLOB test_sources *.cpp)
+foreach(test_source IN LISTS test_sources)
+    get_filename_component(base_name ${test_source} NAME_WE)
+    message("Adding ${base_name} to tests.")
+    add_gmock_test(${base_name} "${base_name}.cpp")
+    target_link_libraries(${base_name} cryptopals)
+endforeach()

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
-project("Fun Questions")
+project("Cryptopals Challenges")
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
@@ -20,10 +20,8 @@ if (NOT CONFIGURED_ONCE)
 endif()
 
 
-file(GLOB question_dirs *question*)
-foreach(question_dir IN LISTS question_dirs)
-    add_subdirectory(${question_dir})
-endforeach()
+add_subdirectory(src)
+add_subdirectory(test)
 
-set(CONFIRGURED_ONCE TRUE CACHE INTERNAL
+set(CONFIGURED_ONCE TRUE CACHE INTERNAL
     "A flag showing that CMake has configured at least once.")
