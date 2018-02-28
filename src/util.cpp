@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <limits>
 
 #include "util.h"
 
@@ -212,6 +213,28 @@ namespace util {
             score += get_etaoin_shrdlu_score(datum);
         }
         return score;
+    }
+
+    vector<uint8_t> decipher_single_char_xor(std::vector<uint8_t> data, uint8_t key)
+    {
+        vector<uint8_t> cipher_vector(data.size(), key);
+        return util::fixed_xor(data, cipher_vector);
+    }
+
+    uint8_t find_single_char_cipher(vector<uint8_t> data)
+    {
+        uint8_t best_key = 0;
+        int64_t max_score = std::numeric_limits<int64_t>::min();
+        for (int trial_key = 0; trial_key <= 0xFF; trial_key++)
+        {
+            vector<uint8_t> trial = decipher_single_char_xor(data, trial_key);
+            int64_t current_score = score_etaoin_shrdlu(trial);
+            if (max_score < current_score) {
+                max_score = current_score;
+                best_key = trial_key;
+            }
+        }
+        return best_key;
     }
 
 } /* util */

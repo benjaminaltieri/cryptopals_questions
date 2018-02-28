@@ -47,23 +47,11 @@ namespace test {
 
     TEST_F(Challenge3, decipher_with_rank)
     {
-        uint8_t best_key = 0;
-        int64_t max_score = -1e6;
         vector<uint8_t> data = util::decode_base16(Challenge3::single_byte_ciphered);
-        for (uint8_t trial_key = 0; trial_key <= 0x7F; trial_key++)
-        {
-            vector<uint8_t> trial_vector(data.size(), trial_key);
-            vector<uint8_t> output = util::fixed_xor(data, trial_vector);
-            int64_t current_score = util::score_etaoin_shrdlu(output);
-            if (max_score < current_score) {
-                max_score = current_score;
-                best_key = trial_key;
-                cout << "New top key '" << best_key << "': " << max_score << endl;
-                string result = string(output.begin(), output.end());
-                cout << result << endl;
-            }
-        }
-        cout << "Best key with a score of " << max_score << " is '" << best_key << "'" << endl;
+		uint8_t result = util::find_single_char_cipher(data);
+		vector<uint8_t> deciphered = util::decipher_single_char_xor(data, result);
+		string result_string = string(deciphered.begin(), deciphered.end());
+        cout << "Best key is '" << result << "' resulting in:" << endl << result_string << endl;
     }
 
 } // namespace test

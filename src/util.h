@@ -16,6 +16,8 @@ namespace util {
     std::string base64_to_base16(std::string base64);
     std::vector<uint8_t> fixed_xor(std::vector<uint8_t> data_a, std::vector<uint8_t> data_b);
     int64_t score_etaoin_shrdlu(std::vector<uint8_t> data);
+    std::vector<uint8_t> decipher_single_char_xor(std::vector<uint8_t> data, uint8_t key);
+    uint8_t find_single_char_cipher(std::vector<uint8_t> data);
 
 } /* util */
 
