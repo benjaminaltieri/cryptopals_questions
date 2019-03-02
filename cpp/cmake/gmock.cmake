@@ -1,4 +1,4 @@
-set(GMOCK_DIR "${CMAKE_SOURCE_DIR}/googletest"
+set(GMOCK_DIR "${CMAKE_SOURCE_DIR}/thirdparty/googletest"
     CACHE PATH "The path to the GoogleMock test framework.")
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
