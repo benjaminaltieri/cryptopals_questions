@@ -1,10 +1,23 @@
 #pragma once
 
 #include <stdint.h>
+#include <limits>
 #include <string>
 #include <vector>
+#include <fstream>
 
 namespace cryptopals {
+
+namespace decode {
+
+    typedef struct {
+        std::string decoded_string = "";
+        size_t file_line = 0;
+        char single_char_cipher = '\0';
+        int64_t etaoin_shrdlu_score = std::numeric_limits<int64_t>::min();
+    } Result;
+
+} /* decode */
 
 namespace util {
 
@@ -18,7 +31,7 @@ namespace util {
     int64_t score_etaoin_shrdlu(std::vector<uint8_t> data);
     std::vector<uint8_t> decipher_single_char_xor(std::vector<uint8_t> data, uint8_t key);
     uint8_t find_single_char_cipher(std::vector<uint8_t> data);
-    //decode::Result find_single_char_cipher_in_file(std::string file_name);
+    decode::Result find_single_char_cipher_in_file(std::ifstream &input_file);
 
 } /* util */
 

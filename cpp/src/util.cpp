@@ -1,5 +1,4 @@
 #include <assert.h>
-#include <limits>
 
 #include "util.h"
 
@@ -237,20 +236,30 @@ namespace util {
         return best_key;
     }
 
-    uint8_t find_single_char_cipher_in_file(vector<uint8_t> data)
+    decode::Result find_single_char_cipher_in_file(std::ifstream &input_file)
     {
-        uint8_t best_key = 0;
-        int64_t max_score = std::numeric_limits<int64_t>::min();
-        for (int trial_key = 0; trial_key <= 0xFF; trial_key++)
+        decode::Result best_result;
+        std::string line;
+        size_t line_count = 0;
+        while (std::getline(input_file, line))
         {
-            vector<uint8_t> trial = decipher_single_char_xor(data, trial_key);
-            int64_t current_score = score_etaoin_shrdlu(trial);
-            if (max_score < current_score) {
-                max_score = current_score;
-                best_key = trial_key;
+            vector<uint8_t> data = util::decode_base16(line);
+            for (int trial_key = 0; trial_key <= 0xFF; trial_key++)
+            {
+                vector<uint8_t> trial = decipher_single_char_xor(data, trial_key);
+                int64_t current_score = score_etaoin_shrdlu(trial);
+                if (best_result.etaoin_shrdlu_score < current_score) {
+                    best_result.decoded_string = string(trial.begin(), trial.end());
+                    best_result.file_line = line_count;
+                    best_result.single_char_cipher = trial_key;
+                    best_result.etaoin_shrdlu_score = current_score;
+                }
             }
+
+            line_count++;
         }
-        return best_key;
+
+        return best_result;
     }
 
 } /* util */
