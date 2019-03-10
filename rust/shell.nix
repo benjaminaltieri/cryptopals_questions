@@ -3,7 +3,9 @@ with import <nixpkgs> {};
 stdenv.mkDerivation {
   name = "rust-env";
   nativeBuildInputs = [
-    rustc cargo rustfmt
+    # use overlay as described here:
+    # https://www.mail-archive.com/nix-dev@lists.science.uu.nl/msg33296.html
+    rustChannels.stable.rust
 
     # Example Build-time Additional Dependencies
     pkgconfig
