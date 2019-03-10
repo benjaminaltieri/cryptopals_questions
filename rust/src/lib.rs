@@ -1,19 +1,16 @@
-use std::vec::Vec;
 use std::collections::HashMap;
+use std::vec::Vec;
 
 pub fn nibble_to_char(nibble: &u8) -> char {
     let index: usize = nibble.clone() as usize;
     let hex_chars = String::from("0123456789abcdef");
     let hex_map: HashMap<usize, char> = hex_chars.char_indices().collect();
-    *hex_map
-        .get(&index)
-        .expect("Nibble value is out of bounds.")
+    *hex_map.get(&index).expect("Nibble value is out of bounds.")
 }
 
 pub fn char_to_nibble(c: &char) -> u8 {
     c.to_digit(16).expect("Char value is out of bounds.") as u8
 }
-
 
 pub fn decode_base16(base16: &String) -> Vec<u8> {
     if base16.len() % 2 != 0 {
@@ -28,8 +25,8 @@ pub fn decode_base16(base16: &String) -> Vec<u8> {
                 let c = it.next().expect("Really unexpected unmatched!");
                 let lower = char_to_nibble(&c);
                 data.push((upper << 4) + lower);
-            },
-            None => break
+            }
+            None => break,
         };
     }
     data
@@ -40,9 +37,7 @@ const BASE64_CHAR_SET: &'static str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmno
 fn sextet_to_char(sextet: &u8) -> char {
     let index: usize = sextet.clone() as usize;
     let hex_map: HashMap<usize, char> = BASE64_CHAR_SET.char_indices().collect();
-    *hex_map
-        .get(&index)
-        .expect("Sextet value is out of bounds.")
+    *hex_map.get(&index).expect("Sextet value is out of bounds.")
 }
 
 fn octets_to_string(octets: &Vec<u8>) -> String {
@@ -91,12 +86,12 @@ pub fn encode_base64(data: &Vec<u8>) -> String {
     let mut octet_set: Vec<u8> = Vec::with_capacity(3);
     loop {
         match it.next() {
-            Some(c) => { octet_set.push(*c) },
+            Some(c) => octet_set.push(*c),
             None => {
                 if !octet_set.is_empty() {
                     base64.push_str(&octets_to_string(&octet_set));
                 }
-                break
+                break;
             }
         };
         if octet_set.len() == 3 {
@@ -116,16 +111,6 @@ mod tests {
     use super::*;
 
     #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-    }
-
-    #[test]
-    fn challenge1() {
-        assert_eq!(2 + 2, 4);
-    }
-
-    #[test]
     fn test_codec() {
         assert_eq!(nibble_to_char(&0x00), '0');
         assert_eq!(nibble_to_char(&0x05), '5');
@@ -136,7 +121,10 @@ mod tests {
         assert_eq!(char_to_nibble(&'A'), 0x0A);
         assert_eq!(decode_base16(&String::from("0A11fe")), vec![10, 17, 254]);
         assert_eq!(decode_base16(&String::from("")), vec![]);
-        assert_eq!(decode_base16(&String::from("FF00ff00")), vec![255, 0, 255, 0]);
+        assert_eq!(
+            decode_base16(&String::from("FF00ff00")),
+            vec![255, 0, 255, 0]
+        );
     }
 
     #[test]
@@ -145,14 +133,4 @@ mod tests {
         decode_base16(&String::from("01234"));
     }
 
-    #[test]
-    fn challenge1_convert_hex_to_base64() {
-        let input = String::from(
-"49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d",
-        );
-        let expected = String::from(
-"SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t",
-        );
-        assert_eq!(base16_to_base64(&input), expected);
-    }
 }
