@@ -32,7 +32,15 @@ pub fn decode_base16(base16: &String) -> Vec<u8> {
     data
 }
 
-const BASE64_CHAR_SET: &'static str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+pub fn encode_base16(data: &Vec<u8>) -> String {
+    let mut base16 = String::new();
+    for datum in data {
+        base16.push_str(&format!("{:x}", datum));
+    }
+    base16
+}
+
+const BASE64_CHAR_SET: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 fn sextet_to_char(sextet: &u8) -> char {
     let index: usize = sextet.clone() as usize;
@@ -104,6 +112,17 @@ pub fn encode_base64(data: &Vec<u8>) -> String {
 
 pub fn base16_to_base64(base16: &String) -> String {
     return encode_base64(&decode_base16(base16));
+}
+
+pub fn fixed_xor(data_a: &Vec<u8>, data_b: &Vec<u8>) -> Vec<u8> {
+    if data_a.len() != data_b.len() {
+        panic!("Mismatched vector length inputs");
+    }
+    let mut xored: Vec<u8> = Vec::new();
+    for (datum1, datum2) in data_a.iter().zip(data_b) {
+        xored.push(datum1 ^ datum2);
+    }
+    xored
 }
 
 #[cfg(test)]
