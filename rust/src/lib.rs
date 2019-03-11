@@ -90,6 +90,23 @@ fn octets_to_string(octets: &[u8]) -> String {
     encoded_chars
 }
 
+const SCORING_CHAR_SET: &str = "etaoin shrdluETAOINSHRDLU";
+
+pub fn get_etaoin_shrdlu_score(to_score: char) -> i64 {
+    let scoring_chars = String::from(SCORING_CHAR_SET);
+    match scoring_chars.find(to_score) {
+        Some(_) => 10,
+        None => {
+            if to_score.is_ascii_graphic() {
+                //0x20..0x80
+                0
+            } else {
+                -10
+            }
+        }
+    }
+}
+
 pub fn encode_base64(data: Vec<u8>) -> String {
     let mut base64: String = String::new();
     let mut it = data.iter();
@@ -125,6 +142,34 @@ pub fn fixed_xor(data_a: &[u8], data_b: &[u8]) -> Vec<u8> {
         xored.push(datum1 ^ datum2);
     }
     xored
+}
+
+pub fn score_etaoin_shrdlu(data: &[u8]) -> i64 {
+    let mut score: i64 = 0;
+    for datum in data {
+        score += get_etaoin_shrdlu_score((*datum).into());
+    }
+    score
+}
+
+pub fn decipher_single_char_xor(data: &[u8], key: u8) -> Vec<u8> {
+    let cipher_vector = vec![key; data.len()];
+    //iter::repeat(0).take(size).collect()
+    fixed_xor(data, &cipher_vector)
+}
+
+pub fn find_single_char_cipher(data: &[u8]) -> u8 {
+    let mut best_key: u8 = 0;
+    let mut max_score: i64 = i64::min_value();
+    for trial_key in 0..u8::max_value() {
+        let trial = decipher_single_char_xor(data, trial_key);
+        let current_score: i64 = score_etaoin_shrdlu(&trial);
+        if max_score < current_score {
+            max_score = current_score;
+            best_key = trial_key;
+        }
+    }
+    best_key
 }
 
 #[cfg(test)]

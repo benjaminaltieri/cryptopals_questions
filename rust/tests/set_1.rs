@@ -20,3 +20,15 @@ fn challenge2_fixed_xor() {
     ));
     assert_eq!(result, expected);
 }
+
+#[test]
+fn challenge3_single_char_xor() {
+    let single_byte_ciphered: String =
+        "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736".into();
+    let data = cryptopals::decode_base16(single_byte_ciphered);
+    let result = cryptopals::find_single_char_cipher(&data);
+    let deciphered = cryptopals::decipher_single_char_xor(&data, result);
+    let result_string = String::from_utf8(deciphered).unwrap();
+    let result: char = result.into();
+    println!("Best key is '{}' resulting in: {}", result, result_string);
+}
