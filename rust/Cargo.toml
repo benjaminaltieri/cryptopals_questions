@@ -4,3 +4,4 @@ version = "0.1.0"
 authors = ["benjaminaltieri <benaltieri@gmail.com>"]
 
 [dependencies]
+hex = "0.3.2"

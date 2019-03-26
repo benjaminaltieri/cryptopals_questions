@@ -1,46 +1,7 @@
+extern crate hex;
+
 use std::collections::HashMap;
 use std::vec::Vec;
-
-pub fn nibble_to_char(nibble: u8) -> char {
-    let index: usize = nibble as usize;
-    let hex_chars = String::from("0123456789abcdef");
-    let hex_map: HashMap<usize, char> = hex_chars.char_indices().collect();
-    *hex_map.get(&index).expect("Nibble value is out of bounds.")
-}
-
-pub fn char_to_nibble(c: char) -> u8 {
-    c.to_digit(16).expect("Char value is out of bounds.") as u8
-}
-
-/// Decode a hex string into a vector of bytes
-///
-/// ```rust
-/// # use cryptopals::*;
-/// assert_eq!(decode_base16("0A11fe".into()), vec![0x0A, 0x11, 0xFE]);
-/// ```
-///
-pub fn decode_base16(base16: String) -> Vec<u8> {
-    if base16.len() % 2 != 0 {
-        panic!("Hex string with unmatched nibble.");
-    }
-    let mut data: Vec<u8> = Vec::new();
-    let mut it = base16.chars();
-    while let Some(c) = it.next() {
-        let upper = char_to_nibble(c);
-        let c = it.next().expect("Really unexpected unmatched!");
-        let lower = char_to_nibble(c);
-        data.push((upper << 4) + lower);
-    }
-    data
-}
-
-pub fn encode_base16(data: Vec<u8>) -> String {
-    let mut base16 = String::new();
-    for datum in data {
-        base16.push_str(&format!("{:x}", datum));
-    }
-    base16
-}
 
 const BASE64_CHAR_SET: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
@@ -107,7 +68,7 @@ pub fn get_etaoin_shrdlu_score(to_score: char) -> i64 {
     }
 }
 
-pub fn encode_base64(data: Vec<u8>) -> String {
+pub fn encode_base64(data: &[u8]) -> String {
     let mut base64: String = String::new();
     let mut it = data.iter();
     let mut octet_set: Vec<u8> = Vec::with_capacity(3);
@@ -129,8 +90,8 @@ pub fn encode_base64(data: Vec<u8>) -> String {
     base64
 }
 
-pub fn base16_to_base64(base16: String) -> String {
-    encode_base64(decode_base16(base16))
+pub fn base16_to_base64(base16: &str) -> String {
+    encode_base64(&hex::decode(base16).unwrap())
 }
 
 pub fn fixed_xor(data_a: &[u8], data_b: &[u8]) -> Vec<u8> {
@@ -172,31 +133,10 @@ pub fn find_single_char_cipher(data: &[u8]) -> u8 {
     best_key
 }
 
+/*
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    #[test]
-    fn test_codec() {
-        assert_eq!(nibble_to_char(0x00), '0');
-        assert_eq!(nibble_to_char(0x05), '5');
-        assert_eq!(nibble_to_char(0x0A), 'a');
-        assert_eq!(char_to_nibble('0'), 0x00);
-        assert_eq!(char_to_nibble('5'), 0x05);
-        assert_eq!(char_to_nibble('a'), 0x0A);
-        assert_eq!(char_to_nibble('A'), 0x0A);
-        assert_eq!(decode_base16(String::from("0A11fe")), vec![10, 17, 254]);
-        assert_eq!(decode_base16(String::from("")), vec![]);
-        assert_eq!(
-            decode_base16(String::from("FF00ff00")),
-            vec![255, 0, 255, 0]
-        );
-    }
-
-    #[test]
-    #[should_panic]
-    fn test_codec_bad_hex_string() {
-        decode_base16(String::from("01234"));
-    }
-
 }
+*/
