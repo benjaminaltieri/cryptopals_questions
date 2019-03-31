@@ -54,8 +54,7 @@ fn octets_to_string(octets: &[u8]) -> String {
 const SCORING_CHAR_SET: &str = "etaoin shrdluETAOINSHRDLU";
 
 pub fn get_etaoin_shrdlu_score(to_score: char) -> i64 {
-    let scoring_chars = String::from(SCORING_CHAR_SET);
-    match scoring_chars.find(to_score) {
+    match SCORING_CHAR_SET.find(to_score) {
         Some(_) => 10,
         None => {
             if to_score.is_ascii_graphic() {
@@ -105,6 +104,22 @@ pub fn fixed_xor(data_a: &[u8], data_b: &[u8]) -> Vec<u8> {
     xored
 }
 
+pub fn repeating_xor(key: &[u8], data: &[u8]) -> Vec<u8> {
+    let mut xored: Vec<u8> = Vec::new();
+    let mut index: usize = 0;
+    while key.len() <= data.len() - index {
+        let mut fixed = fixed_xor(key, &data[index..index + key.len()]);
+        xored.append(&mut fixed);
+        index += key.len();
+    }
+    let remaining = data.len() - index;
+    if remaining > 0 {
+        let mut fixed = fixed_xor(&key[0..remaining], &data[index..index + remaining]);
+        xored.append(&mut fixed);
+    }
+    xored
+}
+
 pub fn score_etaoin_shrdlu(data: &[u8]) -> i64 {
     let mut score: i64 = 0;
     for datum in data {
@@ -115,22 +130,50 @@ pub fn score_etaoin_shrdlu(data: &[u8]) -> i64 {
 
 pub fn decipher_single_char_xor(data: &[u8], key: u8) -> Vec<u8> {
     let cipher_vector = vec![key; data.len()];
-    //iter::repeat(0).take(size).collect()
     fixed_xor(data, &cipher_vector)
 }
 
-pub fn find_single_char_cipher(data: &[u8]) -> u8 {
-    let mut best_key: u8 = 0;
-    let mut max_score: i64 = i64::min_value();
+pub struct XorSearchResult {
+    pub cipher: u8,
+    pub score: i64,
+    pub decoded: Option<String>,
+}
+
+impl XorSearchResult {
+    fn new() -> XorSearchResult {
+        XorSearchResult { cipher: 0, score: i64::min_value(),  decoded: None}
+    }
+}
+
+pub fn find_single_char_cipher(data: &[u8]) -> XorSearchResult {
+    let mut result = XorSearchResult::new();
     for trial_key in 0..u8::max_value() {
         let trial = decipher_single_char_xor(data, trial_key);
         let current_score: i64 = score_etaoin_shrdlu(&trial);
-        if max_score < current_score {
-            max_score = current_score;
-            best_key = trial_key;
+        if result.score < current_score {
+            result.score = current_score;
+            result.cipher = trial_key;
+            match String::from_utf8(trial) {
+                Ok(decoded) => { result.decoded = decoded.into(); }
+                Err(_) => { result.decoded = None; }
+            }
         }
     }
-    best_key
+    result
+}
+
+pub fn find_single_char_xor_in_lines(text: &str) -> XorSearchResult {
+    let mut result = XorSearchResult::new();
+
+    for line in text.lines() {
+        let data = hex::decode(line).expect("Couldn't parse line as hex!");
+        let trial = find_single_char_cipher(&data);
+        if result.score < trial.score {
+            result = trial;
+        }
+    }
+
+    result
 }
 
 /*
